@@ -21,54 +21,57 @@ public class TabuleiroConsole {
     }
 
     private void executarJogo() {
-        try{
+        try {
             boolean continuar = true;
-            while(continuar){
+            while (continuar) {
                 cicloJogo();
                 System.out.println("Outra partida? (S/n) ");
                 String resposta = entrada.nextLine();
-                if("n".equalsIgnoreCase(resposta)){
+                if ("n".equalsIgnoreCase(resposta)) {
                     continuar = false;
-                }else{
+                } else {
                     tabuleiro.reiniciar();
                 }
             }
-        }catch(SairException e){
+        } catch (SairException e) {
             System.out.println("Tchau!");
 
-        }finally {
+        } finally {
             entrada.close();
         }
     }
 
     private void cicloJogo() {
-        try{
-while (!tabuleiro.objetivoAlcancado()){
-    System.out.println(tabuleiro);
-    String digitado = capturarValorDigitado("Digite (x, y)");
+        try {
+            while (!tabuleiro.objetivoAlcancado()) {
+                System.out.println(tabuleiro);
+                String digitado = capturarValorDigitado("Digite (x, y)");
 
-    Iterator<Integer> xy = Arrays.stream(digitado.split(","))
-            .map(e -> Integer.parseInt(e)).iterator();
+                Iterator<Integer> xy = Arrays.stream(digitado.split(","))
+                        .map(e -> Integer.parseInt(e)).iterator();
 
-    digitado = capturarValorDigitado("1 - Abrir ou 2 - (Des)Marcar");
-    if ("1".equals(digitado)){
-        tabuleiro.abrir(xy.next(), xy.next());
-    }else if("2".equals(digitado)){
-        tabuleiro.alterarMarcacao(xy.next(), xy.next());
+                digitado = capturarValorDigitado("1 - Abrir ou 2 - (Des)Marcar");
+                if ("1".equals(digitado)) {
+                    tabuleiro.abrir(xy.next(), xy.next());
+                } else if ("2".equals(digitado)) {
+                    tabuleiro.alterarMarcacao(xy.next(), xy.next());
 
-    }
-}
+                }
+            }
+            System.out.println(tabuleiro);
             System.out.println("Você ganhou.");
-        }catch(ExplosaoException ex){
+        } catch (ExplosaoException ex) {
+
+            System.out.println(tabuleiro);
             System.out.println("Você perdeu.");
         }
     }
 
-    private String capturarValorDigitado(String texto){
+    private String capturarValorDigitado(String texto) {
         System.out.println(texto);
         String digitado = entrada.nextLine();
-        if("sair".equalsIgnoreCase(digitado)){
-           throw new SairException();
+        if ("sair".equalsIgnoreCase(digitado)) {
+            throw new SairException();
         }
         return digitado;
     }

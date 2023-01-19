@@ -1,5 +1,7 @@
 package br.com.xmuproject.model;
 
+import br.com.xmuproject.exception.ExplosaoException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -24,10 +26,15 @@ public class Tabuleiro {
     }
 
     public void abrir(int linha, int coluna) {
-        campos.parallelStream()
-                .filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
-                .findFirst()
-                .ifPresent( c -> c.abrir());
+       try{
+           campos.parallelStream()
+                   .filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
+                   .findFirst()
+                   .ifPresent( c -> c.abrir());
+       }catch (ExplosaoException ex){
+           campos.forEach(c -> c.setAberto(true));
+           throw ex;
+       }
     }
 
     public void alterarMarcacao(int linha, int coluna) {
@@ -59,9 +66,9 @@ public class Tabuleiro {
         long minaArmada = 0;
         Predicate<Campo> minado = c -> c.isMinado();
         do {
-            minaArmada = campos.stream().filter(minado).count();
             int aleatorio = (int) (Math.random() * campos.size());
             campos.get(aleatorio).minar();
+            minaArmada = campos.stream().filter(minado).count();
         } while (minaArmada < mina);
     }
 
@@ -77,8 +84,17 @@ public class Tabuleiro {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
+            sb.append("  ");
+        for (int i = 0; i < coluna; i++) {
+            sb.append(" ");
+            sb.append(i);
+            sb.append(" ");
+        }
+            sb.append("\n");
         int i = 0;
         for (int l = 0; l < linha; l++) {
+            sb.append(l);
+            sb.append(" ");
             for (int c = 0; c < coluna; c++) {
                 sb.append(" ");
                 sb.append(campos.get(i));
